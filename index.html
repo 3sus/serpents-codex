@@ -45,7 +45,6 @@
 <title>Serpent’s Codex</title>
 <link rel="icon" type="image/png" href="favicon.png">
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
 <style>
 @font-face {
   font-family: 'MagicSchool';
@@ -269,41 +268,6 @@ li { margin: 5px 0; font-size: 1em; line-height: 1.5; color: var(--slytherin-tex
   box-shadow: 0 0 10px var(--slytherin-border);
   transform: scale(1.05);
 }
-#pdfModal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.8);
-  z-index: 10;
-}
-#pdfModal > div {
-  position: relative;
-  margin: 5% auto;
-  width: 80%;
-  height: 80%;
-  max-width: 800px;
-  background: #fff;
-  border-radius: 8px;
-  overflow: hidden;
-}
-#pdfModal button {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  padding: 5px 10px;
-  background: var(--slytherin-accent);
-  color: var(--slytherin-card-bg);
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
-#pdfCanvas {
-  width: 100%;
-  height: 100%;
-}
 </style>
 </head>
 <body>
@@ -392,7 +356,7 @@ li { margin: 5px 0; font-size: 1em; line-height: 1.5; color: var(--slytherin-tex
 <li class="checklist-item"><input type="checkbox" id="daily8" aria-label="Hagberts Hut gift" aria-describedby="timer8"><span><strong>Hagberts Hut gift</strong></span><span class="timer" id="timer8"></span></li>
 <li class="checklist-item"><input type="checkbox" id="daily4" aria-label="Warlocks Stone pt5" aria-describedby="timer4"><span><strong>Warlocks Stone pt5</strong></span><span class="timer" id="timer4"></span></li>
 <li class="checklist-item"><input type="checkbox" id="daily5" aria-label="Springs Oak Tree Farm pt1-3" aria-describedby="timer5"><span><strong>Springs Oak Tree Farm pt1-3</strong> <em>(you'll need to repair once at Hagberts Mine)</em></span><span class="timer" id="timer5"></span></li>
-<li class="checklist-item"><input type="checkbox" id="daily6" aria-label="Evie's Quest Speedrun" aria-describedby="timer6"><span><button onclick="showPdf('Evies Speedrun.pdf')" class="guide-button">View Evie's Quest Speedrun</button></span><span class="timer" id="timer6"></span></li>
+<li class="checklist-item"><input type="checkbox" id="daily6" aria-label="Evie's Quest Speedrun" aria-describedby="timer6"><span><a href="Evies Speedrun.pdf" class="guide-button">Evie’s Quest Speedrun</a></span><span class="timer" id="timer6"></span></li>
 </ul></details>
 <details id="buyIngredients"><summary>Where to Buy Ingredients</summary>
 <details><summary>Pete's Pewter Pots</summary><ul>
@@ -498,45 +462,10 @@ li { margin: 5px 0; font-size: 1em; line-height: 1.5; color: var(--slytherin-tex
 <details><summary>Graduate</summary><p>Work in progress</p></details>
 </details>
 <details id="moreGuides"><summary>More Detailed Guides</summary><ul>
-<li><button onclick="showPdf('Roxas%20Potions.pdf')" class="guide-button">View Roxas’ Comprehensive Guide to Potions</button></li>
-<li><button onclick="showPdf('Roxas%20Stormcrest.pdf')" class="guide-button">View Roxas’ Comprehensive Beginner’s Guide to Stormcrest</button></li>
+<li><a href="Roxas Potions.pdf" class="guide-button">Roxas’ Comprehensive Guide to Potions</a></li>
+<li><a href="Roxas Stormcrest.pdf" class="guide-button">Roxas’ Comprehensive Beginner’s Guide to Stormcrest</a></li>
 </ul></details>
-<div id="pdfModal" style="display: none;">
-  <div>
-    <button onclick="closePdf()">Close</button>
-    <canvas id="pdfCanvas"></canvas>
-  </div>
-</div>
 <script>
-pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js';
-let pdfDoc = null;
-let pageNum = 1;
-function showPdf(file) {
-  pdfjsLib.getDocument(file).promise.then(pdf => {
-    pdfDoc = pdf;
-    pageNum = 1;
-    renderPage();
-    document.getElementById('pdfModal').style.display = 'block';
-  }).catch(err => {
-    console.error('Error loading PDF:', err);
-    document.getElementById('storageWarning').style.display = 'block';
-    document.getElementById('storageWarning').textContent = 'Error loading PDF. If testing locally, try running a local server (e.g., python -m http.server) or deploying to Netlify.';
-  });
-}
-function renderPage() {
-  pdfDoc.getPage(pageNum).then(page => {
-    const canvas = document.getElementById('pdfCanvas');
-    const ctx = canvas.getContext('2d');
-    const viewport = page.getViewport({ scale: 1.5 });
-    canvas.height = viewport.height;
-    canvas.width = viewport.width;
-    page.render({ canvasContext: ctx, viewport: viewport }).promise;
-  });
-}
-function closePdf() {
-  document.getElementById('pdfModal').style.display = 'none';
-  document.getElementById('pdfCanvas').getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
-}
 const magicSchoolFont = new FontFace('MagicSchool', 'url(MagicSchool.woff2)');
 magicSchoolFont.load();
 const loadingSpinner = document.getElementById('loadingSpinner');
@@ -625,7 +554,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const suggestions = document.getElementById('suggestions');
   const allTopics = Array.from(document.querySelectorAll('#year1 li, #buyIngredients li, #findIngredients li, #betterPotionRecipes summary, #moreGuides li')).map(el => {
     const strong = el.querySelector('strong');
-    return strong ? strong.textContent : el.textContent.split(':')[0].trim();
+    const a = el.querySelector('a');
+    return strong ? strong.textContent : a ? a.textContent : el.textContent.split(':')[0].trim();
   }).filter(t => t);
   searchBar.addEventListener('input', () => {
     const query = searchBar.value.toLowerCase();
@@ -658,7 +588,8 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         if (i < details.length - 1) details[i + 1].focus();
       } else if (e.key === 'ArrowUp') {
-        e.preventDefault();
+        e.preven
+tDefault();
         if (i > 0) details[i - 1].focus();
       }
     });
@@ -719,7 +650,7 @@ function updateTimers() {
             localStorage.removeItem(`${e.id}_time`);
           } else {
             timerStore[e.id] = false;
-            delete timerStore[`${e.id}_time`];
+            delete timerStore[`${t.id}_time`];
           }
         }
       } else {
