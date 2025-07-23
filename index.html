@@ -45,72 +45,73 @@
 <title>Serpent’s Codex</title>
 <link rel="icon" type="image/png" href="favicon.png">
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
 <style>
 @font-face {
-font-family: 'MagicSchool';
-src: local('MagicSchool'), url('MagicSchool.ttf') format('truetype');
-font-weight: normal;
-font-style: normal;
+  font-family: 'MagicSchool';
+  src: local('MagicSchool'), url('MagicSchool.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
 }
 :root {
---slytherin-background: #0a2414;
---slytherin-card-bg: #e8ecef;
---slytherin-text: #000000;
---slytherin-header: #cccccc;
---slytherin-accent: #1a3c34;
---slytherin-border: #4a7043;
+  --slytherin-background: #0a2414;
+  --slytherin-card-bg: #e8ecef;
+  --slytherin-text: #000000;
+  --slytherin-header: #cccccc;
+  --slytherin-accent: #1a3c34;
+  --slytherin-border: #4a7043;
 }
 body {
-background: var(--slytherin-background);
-color: var(--slytherin-text);
-font-family: 'Roboto', sans-serif;
-max-width: 800px;
-margin: 20px auto;
-padding: 8px;
-position: relative;
-overflow-x: hidden;
+  background: var(--slytherin-background);
+  color: var(--slytherin-text);
+  font-family: 'Roboto', sans-serif;
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 8px;
+  position: relative;
+  overflow-x: hidden;
 }
 @media (max-width: 600px) {
-body { padding: 8px; }
-.title { font-size: 2.8em; }
+  body { padding: 8px; }
+  .title { font-size: 2.8em; }
 }
 #loadingSpinner {
-position: fixed;
-top: 50%;
-left: 50%;
-transform: translate(-50%, -50%);
-width: 40px;
-height: 40px;
-border: 4px solid var(--slytherin-border);
-border-top: 4px solid transparent;
-border-radius: 50%;
-animation: spin 1s linear infinite;
-z-index: 20;
-display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--slytherin-border);
+  border-top: 4px solid transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  z-index: 20;
+  display: none;
 }
 @keyframes spin { 0% { transform: translate(-50%, -50%) rotate(0deg); } 100% { transform: translate(-50%, -50%) rotate(360deg); } }
 canvas {
-position: fixed;
-top: 0;
-left: 0;
-width: 100%;
-height: 100%;
-z-index: -1;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
 }
 header { text-align: center; margin-bottom: 20px; }
 .title {
-display: inline-block;
-font-family: 'MagicSchool', 'Roboto', sans-serif;
-color: var(--slytherin-header);
-font-size: 3.5em;
-font-weight: 300;
-text-shadow: 0.5px 0.5px 1px rgba(0,0,0,0.2);
-letter-spacing: 0.05em;
-line-height: 1.2;
+  display: inline-block;
+  font-family: 'MagicSchool', 'Roboto', sans-serif;
+  color: var(--slytherin-header);
+  font-size: 3.5em;
+  font-weight: 300;
+  text-shadow: 0.5px 0.5px 1px rgba(0,0,0,0.2);
+  letter-spacing: 0.05em;
+  line-height: 1.2;
 }
 .title span {
-opacity: 0;
-animation: appear 0.12s forwards;
+  opacity: 0;
+  animation: appear 0.12s forwards;
 }
 .title span:nth-child(1) { animation-delay: 0.12s; }
 .title span:nth-child(2) { animation-delay: 0.24s; }
@@ -129,116 +130,116 @@ animation: appear 0.12s forwards;
 .title span:nth-child(15) { animation-delay: 1.80s; }
 @keyframes appear { to { opacity: 1; } }
 .made-by {
-font-size: 0.8em;
-font-style: italic;
-color: var(--slytherin-header);
-text-align: center;
-margin-top: -10px;
+  font-size: 0.8em;
+  font-style: italic;
+  color: var(--slytherin-header);
+  text-align: center;
+  margin-top: -10px;
 }
 .storage-warning {
-background: var(--slytherin-accent);
-color: var(--slytherin-header);
-padding: 8px;
-border-radius: 5px;
-margin-bottom: 16px;
-font-size: 0.9em;
-text-align: center;
-display: none;
+  background: var(--slytherin-accent);
+  color: var(--slytherin-header);
+  padding: 8px;
+  border-radius: 5px;
+  margin-bottom: 16px;
+  font-size: 0.9em;
+  text-align: center;
+  display: none;
 }
 .storage-warning button {
-background: var(--slytherin-accent);
-color: var(--slytherin-card-bg);
-border: none;
-padding: 5px 10px;
-border-radius: 6px;
-cursor: pointer;
-margin-left: 8px;
-transition: all 0.3s ease;
+  background: var(--slytherin-accent);
+  color: var(--slytherin-card-bg);
+  border: none;
+  padding: 5px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-left: 8px;
+  transition: all 0.3s ease;
 }
 .storage-warning button:hover {
-background: var(--slytherin-border);
-box-shadow: 0 0 10px var(--slytherin-border);
-transform: scale(1.05);
+  background: var(--slytherin-border);
+  box-shadow: 0 0 10px var(--slytherin-border);
+  transform: scale(1.05);
 }
 #searchBar {
-width: 100%;
-padding: 8px;
-margin-bottom: 16px;
-font-size: 1em;
-border: 1px solid var(--slytherin-border);
-border-radius: 8px;
-background: var(--slytherin-card-bg);
-color: var(--slytherin-text);
-position: sticky;
-top: 0;
-z-index: 5;
-box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-transition: box-shadow 0.3s ease;
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 16px;
+  font-size: 1em;
+  border: 1px solid var(--slytherin-border);
+  border-radius: 8px;
+  background: var(--slytherin-card-bg);
+  color: var(--slytherin-text);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: box-shadow 0.3s ease;
 }
 #searchBar:hover, #searchBar:focus {
-box-shadow: 0 0 10px var(--slytherin-border);
+  box-shadow: 0 0 10px var(--slytherin-border);
 }
 .search-suggestions {
-position: absolute;
-width: 100%;
-max-height: 150px;
-overflow-y: auto;
-background: var(--slytherin-card-bg);
-border: 1px solid var(--slytherin-border);
-border-radius: 5px;
-z-index: 6;
-display: none;
-animation: fadeInSuggestions 0.3s ease;
+  position: absolute;
+  width: 100%;
+  max-height: 150px;
+  overflow-y: auto;
+  background: var(--slytherin-card-bg);
+  border: 1px solid var(--slytherin-border);
+  border-radius: 5px;
+  z-index: 6;
+  display: none;
+  animation: fadeInSuggestions 0.3s ease;
 }
 @keyframes fadeInSuggestions { from { opacity: 0; } to { opacity: 1; } }
 .search-suggestions div {
-padding: 8px 10px;
-cursor: pointer;
-color: var(--slytherin-text);
-font-size: 1.1em;
+  padding: 8px 10px;
+  cursor: pointer;
+  color: var(--slytherin-text);
+  font-size: 1.1em;
 }
 .search-suggestions div:hover {
-background: var(--slytherin-border);
-color: var(--slytherin-header);
+  background: var(--slytherin-border);
+  color: var(--slytherin-header);
 }
 details {
-margin: 8px 0;
-background: var(--slytherin-card-bg);
-padding: 8px;
-border-radius: 6px;
-border: 1px solid var(--slytherin-border);
-box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-transition: transform 0.2s ease, box-shadow 0.2s ease;
+  margin: 8px 0;
+  background: var(--slytherin-card-bg);
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid var(--slytherin-border);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 details:hover {
-transform: translateY(-2px);
-box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 summary {
-cursor: pointer;
-font-weight: 700;
-font-size: 1.3em;
-color: var(--slytherin-header);
-padding: 5px;
-background: var(--slytherin-accent);
-border-radius: 5px;
-transition: box-shadow 0.3s ease;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 1.3em;
+  color: var(--slytherin-header);
+  padding: 5px;
+  background: var(--slytherin-accent);
+  border-radius: 5px;
+  transition: box-shadow 0.3s ease;
 }
 summary:hover {
-box-shadow: 0 0 6px var(--slytherin-border);
+  box-shadow: 0 0 6px var(--slytherin-border);
 }
 ul { list-style-type: none; padding-left: 16px; }
 li { margin: 5px 0; font-size: 1em; line-height: 1.5; color: var(--slytherin-text); }
 .notes {
-font-style: italic;
-color: var(--slytherin-accent);
-margin: 5px 0;
-font-size: 0.9em;
+  font-style: italic;
+  color: var(--slytherin-accent);
+  margin: 5px 0;
+  font-size: 0.9em;
 }
 .checklist-item {
-display: flex;
-align-items: center;
-margin: 5px 0;
+  display: flex;
+  align-items: center;
+  margin: 5px 0;
 }
 .checklist-item input { margin-right: 8px; }
 .checklist-item span { color: var(--slytherin-text); font-size: 1em; }
@@ -246,27 +247,62 @@ margin: 5px 0;
   margin-left: 8px;
   font-size: 0.9em;
   color: var(--slytherin-border);
-  background: #ffffff; /* Changed to pure white */
+  background: #ffffff;
   padding: 2px 6px;
   border-radius: 3px;
   display: inline-block;
   min-width: 80px;
 }
 .guide-button {
-display: inline-block;
-padding: 5px 10px;
-background: var(--slytherin-accent);
-color: var(--slytherin-card-bg);
-text-decoration: none;
-border-radius: 6px;
-margin: 5px 0;
-font-size: 0.9em;
-transition: all 0.3s ease;
+  display: inline-block;
+  padding: 5px 10px;
+  background: var(--slytherin-accent);
+  color: var(--slytherin-card-bg);
+  text-decoration: none;
+  border-radius: 6px;
+  margin: 5px 0;
+  font-size: 0.9em;
+  transition: all 0.3s ease;
 }
 .guide-button:hover {
-background: var(--slytherin-border);
-box-shadow: 0 0 10px var(--slytherin-border);
-transform: scale(1.05);
+  background: var(--slytherin-border);
+  box-shadow: 0 0 10px var(--slytherin-border);
+  transform: scale(1.05);
+}
+#pdfModal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.8);
+  z-index: 10;
+}
+#pdfModal > div {
+  position: relative;
+  margin: 5% auto;
+  width: 80%;
+  height: 80%;
+  max-width: 800px;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+#pdfModal button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 5px 10px;
+  background: var(--slytherin-accent);
+  color: var(--slytherin-card-bg);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+#pdfCanvas {
+  width: 100%;
+  height: 100%;
 }
 </style>
 </head>
@@ -288,7 +324,7 @@ transform: scale(1.05);
 <li><strong>Amnesia:</strong> True, Red, Weeks, Lethe</li>
 <li><strong>Sleeping Draught:</strong> True, Medieval times, 19th century</li>
 <li><strong>Insomnia:</strong> 48 hours, True, Snake</li>
-<li><strong>Curcubita:</strong> Orange, False, Encases the drinker's head into a pumpkin</li>
+<li><strong>Cucurbita:</strong> Orange, False, Encases the drinker's head into a pumpkin</li>
 <li><strong>Herbicide:</strong> Thickens them, It can kill weeds, False</li>
 <li><strong>Remedy for Regular Toxins:</strong> Bezoar, Powdered, Bowtruckle, Uncommon</li>
 </ul></details>
@@ -299,6 +335,7 @@ transform: scale(1.05);
 <li><strong>Rowena Ravens:</strong> Albania, Helga Badgers, The grand staircase</li>
 <li><strong>Werewolf Code of Conduct:</strong> Name, Lycanthropy, 2011</li>
 <li><strong>International Statute of Secrecy:</strong> Gavroche Grelenwaffe & Lord Voldemort, Henry Parker, International Statute of Secrecy</li>
+<li><strong>Greedgotts:</strong> 10 years, 1865, 1474, Quirinus Quarrel, Dragon</li>
 </ul></details>
 <details><summary>Enchantments</summary><ul>
 <li><strong>Fixo:</strong> Coloseum in Rome, 1754, Wand</li>
@@ -330,6 +367,7 @@ transform: scale(1.05);
 <li><strong>Vampires:</strong> Saliva, Garlic, Being</li>
 <li><strong>Bukavac:</strong> Revulsion Jinx, Break their grip, XX</li>
 <li><strong>Poxies:</strong> Knockback Jinx, Their numbers might overwhelm you, Arms and legs</li>
+<li><strong>Pixies:</strong> Eradicating the species, 0, Eight</li>
 </ul></details>
 <details><summary>Astronomy</summary><ul>
 <li><strong>Jupiter:</strong> False, One of four, The Romanian King of Gods</li>
@@ -347,254 +385,370 @@ transform: scale(1.05);
 </ul></details>
 </details>
 <details id="dailies"><summary>Dailies</summary><ul>
-<li class="checklist-item"><input type="checkbox" id="daily1" aria-label="Enchantments, Transfiguration, and Dark Arts Defense"><span><strong>Enchantments, Transfiguration, and Dark Arts Defense</strong> spell casts</span><span class="timer" id="timer1"></span></li>
-<li class="checklist-item"><input type="checkbox" id="daily2" aria-label="Hagberts Mine pt1"><span><strong>Hagberts Mine pt1</strong></span><span class="timer" id="timer2"></span></li>
-<li class="checklist-item"><input type="checkbox" id="daily7" aria-label="Hagberts Mine pt2"><span><strong>Hagberts Mine pt2</strong></span><span class="timer" id="timer7"></span></li>
-<li class="checklist-item"><input type="checkbox" id="daily3" aria-label="Room of Mysteries Maze"><span><strong>Room of Mysteries Maze</strong></span><span class="timer" id="timer3"></span></li>
-<li class="checklist-item"><input type="checkbox" id="daily8" aria-label="Hagberts Hut gift"><span><strong>Hagberts Hut gift</strong></span><span class="timer" id="timer8"></span></li>
-<li class="checklist-item"><input type="checkbox" id="daily4" aria-label="Warlocks Stone pt5"><span><strong>Warlocks Stone pt5</strong></span><span class="timer" id="timer4"></span></li>
-<li class="checklist-item"><input type="checkbox" id="daily5" aria-label="Springs Oak Tree Farm pt1-3"><span><strong>Springs Oak Tree Farm pt1-3</strong> <em>(you'll need to repair once at Hagberts Mine)</em></span><span class="timer" id="timer5"></span></li>
-<li class="checklist-item"><input type="checkbox" id="daily6" aria-label="????'s Google Doc Speedrun"><span><a href="https://docs.google.com/document/d/1KlI0sTRkMXmw8MS5kB4-ZhlUem7U_gWqrfNOvcXdPQg/edit?tab=t.6x2tieuubr07" target="_blank" class="guide-button">????'s Google Doc Speedrun</a></span><span class="timer" id="timer6"></span></li>
+<li class="checklist-item"><input type="checkbox" id="daily1" aria-label="Enchantments, Transfiguration, and Dark Arts Defense" aria-describedby="timer1"><span><strong>Enchantments, Transfiguration, and Dark Arts Defense</strong> spell casts</span><span class="timer" id="timer1"></span></li>
+<li class="checklist-item"><input type="checkbox" id="daily2" aria-label="Hagberts Mine pt1" aria-describedby="timer2"><span><strong>Hagberts Mine pt1</strong></span><span class="timer" id="timer2"></span></li>
+<li class="checklist-item"><input type="checkbox" id="daily7" aria-label="Hagberts Mine pt2" aria-describedby="timer7"><span><strong>Hagberts Mine pt2</strong></span><span class="timer" id="timer7"></span></li>
+<li class="checklist-item"><input type="checkbox" id="daily3" aria-label="Room of Mysteries Maze" aria-describedby="timer3"><span><strong>Room of Mysteries Maze</strong></span><span class="timer" id="timer3"></span></li>
+<li class="checklist-item"><input type="checkbox" id="daily8" aria-label="Hagberts Hut gift" aria-describedby="timer8"><span><strong>Hagberts Hut gift</strong></span><span class="timer" id="timer8"></span></li>
+<li class="checklist-item"><input type="checkbox" id="daily4" aria-label="Warlocks Stone pt5" aria-describedby="timer4"><span><strong>Warlocks Stone pt5</strong></span><span class="timer" id="timer4"></span></li>
+<li class="checklist-item"><input type="checkbox" id="daily5" aria-label="Springs Oak Tree Farm pt1-3" aria-describedby="timer5"><span><strong>Springs Oak Tree Farm pt1-3</strong> <em>(you'll need to repair once at Hagberts Mine)</em></span><span class="timer" id="timer5"></span></li>
+<li class="checklist-item"><input type="checkbox" id="daily6" aria-label="Evie's Quest Speedrun" aria-describedby="timer6"><span><button onclick="showPdf('Evies Speedrun.pdf')" class="guide-button">View Evie's Quest Speedrun</button></span><span class="timer" id="timer6"></span></li>
 </ul></details>
-<details id="guides"><summary>Guides</summary><ul>
-<li><a href="Roxas%20Potions.pdf" target="_blank" class="guide-button">Roxas’ Comprehensive Guide to Potions</a></li>
-<li><a href="Roxas%20Stormcrest.pdf" target="_blank" class="guide-button">Roxas’ Comprehensive Beginner’s Guide to Stormcrest</a></li>
+<details id="buyIngredients"><summary>Where to Buy Ingredients</summary>
+<details><summary>Pete's Pewter Pots</summary><ul>
+<li><strong>Location:</strong> [-1106 19 157]</li>
+<li>Bursting Mushroom</li>
+<li>Knotgrass</li>
+<li>Scurvy Grass</li>
+<li>Womandrake</li>
+<li>Ginger Root</li>
+<li>Standard Ingredient</li>
+<li>Willywig Sting</li>
 </ul></details>
+<details><summary>Beck and Apothecary</summary><ul>
+<li><strong>Location:</strong> [-1123 19 162]</li>
+<li>Unicorn Horn</li>
+<li>Rat Spleen</li>
+<li>Lorkhump</li>
+<li>Tricorn Horn</li>
+<li>Choorang</li>
+<li>Dragon Scale</li>
+<li>Lethe River Water</li>
+<li>Griffin Claw</li>
+</ul></details>
+<details><summary>G. Peppin's Potions</summary><ul>
+<li><strong>Location:</strong> [-1164 19 307]</li>
+<li>Salamander Blood</li>
+<li>Snake Fang</li>
+<li>Poxy Eggs</li>
+<li>Flying Seahorses</li>
+<li>Bezoar</li>
+<li>Leeches</li>
+<li>Lacewing Flies</li>
+<li>Slobberworm</li>
+</ul></details>
+<details><summary>Hogrin and Durms</summary><ul>
+<li><strong>Location:</strong> [-1205 14 364]</li>
+<li>Tentalap Tentacles</li>
+<li>Dragonfly Thoraxes</li>
+<li>Wartcap</li>
+<li>Porcupine Quill</li>
+<li>Eel Eye</li>
+<li>Octopus</li>
+<li>Lionfish Spine</li>
+<li>Armadillo Liver</li>
+<li>Pickled Tentalap Tentacles</li>
+</ul></details>
+<details><summary>Deep Knockturn Shopkeeper</summary><ul>
+<li><strong>Location:</strong> [-1193 11 407]</li>
+<li>Dragon Blood</li>
+<li>Leeches</li>
+<li>Rat Spleen</li>
+<li>Unicorn Horn</li>
+<li>Eel Eye</li>
+<li>Bursting Mushroom</li>
+</ul></details>
+<details><summary>The Clever Cover</summary><ul>
+<li><strong>Location:</strong> [-1155 23 376]</li>
+<li>Tricorn Horn</li>
+<li>Fluxweed</li>
+<li>Beetle</li>
+</ul></details>
+<details><summary>Nev behind Greenhouses</summary><ul>
+<li><strong>Location:</strong> [-8931 43 9323]</li>
+<li>Lavender</li>
+<li>Valerian</li>
+<li>Dried Nettle</li>
+<li>Mistletoe Berry</li>
+<li>Pumpkin</li>
+<li>Wolfsbane</li>
+<li>Fireseed</li>
+</ul></details>
+</details>
+<details id="findIngredients"><summary>Where to Find Ingredients</summary><ul>
+<li><strong>Bezoar:</strong> On top of the Owlery [-9479 152 8869]</li>
+<li><strong>Lethe River Water:</strong> Far left corner of Whispering Woods [-9988 30 8340]</li>
+<li><strong>Salamander Blood:</strong> Far left corner of Kitchens [-9827 31 9277]</li>
+<li><strong>Phoenix Tail Feather:</strong> Dumblestorm's Tomb [-10087 16 9561]</li>
+<li><strong>Armadillo Liver:</strong> Serpent Secret Room [-9412 28 9438]</li>
+<li><strong>Griffin Claw:</strong> Opposite Boathouse [-10187 28 9427]</li>
+<li><strong>Ginger Root:</strong> Bashing Birch Tree [-9749 30 8870]</li>
+<li><strong>Dragon Scale:</strong> Middle left of Whispering Woods [-9930 33 8592]</li>
+<li><strong>Unicorn Horn:</strong> Middle of Whispering Woods [-9820 6 8603]</li>
+<li><strong>Lacewing Flies:</strong> Detention Room [-9727 39 9207]</li>
+<li><strong>Porcupine Quills:</strong> Transfiguration Classroom [-9211 40 9449]</li>
+<li><strong>Mushrooms, Critters, Plants:</strong> All types of shrooms, Boomslang, Flobberworms, Beetles can be found on the ground in the Whispering Woods</li>
+<li><strong>Fish-related Ingredients:</strong> All ingredients with the word "fish" can be caught with a rod in open waters</li>
+</ul></details>
+<details id="betterPotionRecipes"><summary>Better Potion Recipes</summary>
+<details><summary>Year 1</summary>
+<details><summary>Insomnia Potion</summary><p>Work in progress</p></details>
+<details><summary>Remedy for Regular Toxins</summary><p>Work in progress</p></details>
+<details><summary>Cleanse for Blisters</summary><p>Work in progress</p></details>
+<details><summary>Amnesia Potion</summary><p>Work in progress</p></details>
+<details><summary>Cucurbita Potion</summary><p>Work in progress</p></details>
+<details><summary>Fire Protection Potion</summary><p>Work in progress</p></details>
+</details>
+<details><summary>Year 2</summary><p>Work in progress</p></details>
+<details><summary>Year 3</summary><p>Work in progress</p></details>
+<details><summary>Year 4</summary><p>Work in progress</p></details>
+<details><summary>Year 5</summary><p>Work in progress</p></details>
+<details><summary>Year 6</summary><p>Work in progress</p></details>
+<details><summary>Year 7</summary><p>Work in progress</p></details>
+<details><summary>Graduate</summary><p>Work in progress</p></details>
+</details>
+<details id="moreGuides"><summary>More Detailed Guides</summary><ul>
+<li><button onclick="showPdf('Roxas%20Potions.pdf')" class="guide-button">View Roxas’ Comprehensive Guide to Potions</button></li>
+<li><button onclick="showPdf('Roxas%20Stormcrest.pdf')" class="guide-button">View Roxas’ Comprehensive Beginner’s Guide to Stormcrest</button></li>
+</ul></details>
+<div id="pdfModal" style="display: none;">
+  <div>
+    <button onclick="closePdf()">Close</button>
+    <canvas id="pdfCanvas"></canvas>
+  </div>
+</div>
 <script>
-var gk_isXlsx = false;
-var gk_xlsxFileLookup = {};
-var gk_fileData = {};
-function filledCell(cell) {
-return cell !== '' && cell != null;
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js';
+let pdfDoc = null;
+let pageNum = 1;
+function showPdf(file) {
+  pdfjsLib.getDocument(file).promise.then(pdf => {
+    pdfDoc = pdf;
+    pageNum = 1;
+    renderPage();
+    document.getElementById('pdfModal').style.display = 'block';
+  }).catch(err => {
+    console.error('Error loading PDF:', err);
+    document.getElementById('storageWarning').style.display = 'block';
+    document.getElementById('storageWarning').textContent = 'Error loading PDF. If testing locally, try running a local server (e.g., python -m http.server) or deploying to Netlify.';
+  });
 }
-function loadFileData(filename) {
-if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-try {
-var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-var firstSheetName = workbook.SheetNames[0];
-var worksheet = workbook.Sheets[firstSheetName];
-var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-var filteredData = jsonData.filter(row => row.some(filledCell));
-var headerRowIndex = filteredData.findIndex((row, index) =>
-row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-);
-if (headerRowIndex === -1 || headerRowIndex > 25) {
-headerRowIndex = 0;
+function renderPage() {
+  pdfDoc.getPage(pageNum).then(page => {
+    const canvas = document.getElementById('pdfCanvas');
+    const ctx = canvas.getContext('2d');
+    const viewport = page.getViewport({ scale: 1.5 });
+    canvas.height = viewport.height;
+    canvas.width = viewport.width;
+    page.render({ canvasContext: ctx, viewport: viewport }).promise;
+  });
 }
-var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex));
-csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-return csv;
-} catch (e) {
-console.error(e);
-return "";
+function closePdf() {
+  document.getElementById('pdfModal').style.display = 'none';
+  document.getElementById('pdfCanvas').getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
 }
-}
-return gk_fileData[filename] || "";
-}
-const magicSchoolFont = new FontFace('MagicSchool', 'url(MagicSchool.ttf)');
-magicSchoolFont.load().then(() => {
-console.log('MagicSchool font loaded successfully');
-}).catch((error) => {
-console.error('Failed to load MagicSchool font:', error);
-});
+const magicSchoolFont = new FontFace('MagicSchool', 'url(MagicSchool.woff2)');
+magicSchoolFont.load();
 const loadingSpinner = document.getElementById('loadingSpinner');
 window.addEventListener('load', () => {
-loadingSpinner.style.display = 'none';
+  loadingSpinner.style.display = 'none';
 });
 const canvas = document.getElementById('particles');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
-const particles = [];
-for (let i = 0; i < 200; i++) {
-particles.push({
-x: Math.random() * canvas.width,
-y: Math.random() * canvas.height,
-radius: Math.random() * 2 + 1,
-type: Math.random() > 0.5 ? 'star' : 'bubble',
-vx: Math.random() * 0.6 - 0.3,
-vy: Math.random() * 0.6 - 0.3,
-opacity: Math.random() * 0.1 + 0.15
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
 });
+const particles = [];
+for (let i = 0; i < 50; i++) {
+  particles.push({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    radius: Math.random() * 2 + 1,
+    type: Math.random() > 0.5 ? 'star' : 'bubble',
+    vx: Math.random() * 0.6 - 0.3,
+    vy: Math.random() * 0.6 - 0.3,
+    opacity: Math.random() * 0.1 + 0.15
+  });
 }
 function animateParticles() {
-ctx.clearRect(0, 0, canvas.width, canvas.height);
-particles.forEach(p => {
-ctx.fillStyle = `rgba(204, 204, 204, ${p.opacity})`;
-ctx.beginPath();
-if (p.type === 'star') {
-ctx.moveTo(p.x, p.y - p.radius);
-ctx.lineTo(p.x + p.radius * 0.3, p.y + p.radius * 0.3);
-ctx.lineTo(p.x + p.radius, p.y + p.radius);
-ctx.lineTo(p.x + p.radius * 0.3, p.y + p.radius * 0.3);
-ctx.lineTo(p.x, p.y + p.radius * 2);
-ctx.lineTo(p.x - p.radius * 0.3, p.y + p.radius * 0.3);
-ctx.lineTo(p.x - p.radius, p.y + p.radius);
-ctx.lineTo(p.x - p.radius * 0.3, p.y + p.radius * 0.3);
-ctx.lineTo(p.x, p.y - p.radius);
-} else {
-ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-}
-ctx.fill();
-p.x += p.vx;
-p.y += p.vy;
-if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-});
-requestAnimationFrame(animateParticles);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach(p => {
+    ctx.fillStyle = `rgba(204, 204, 204, ${p.opacity})`;
+    ctx.beginPath();
+    if (p.type === 'star') {
+      ctx.moveTo(p.x, p.y - p.radius);
+      ctx.lineTo(p.x + p.radius * 0.3, p.y + p.radius * 0.3);
+      ctx.lineTo(p.x + p.radius, p.y + p.radius);
+      ctx.lineTo(p.x + p.radius * 0.3, p.y + p.radius * 0.3);
+      ctx.lineTo(p.x, p.y + p.radius * 2);
+      ctx.lineTo(p.x - p.radius * 0.3, p.y + p.radius * 0.3);
+      ctx.lineTo(p.x - p.radius, p.y + p.radius);
+      ctx.lineTo(p.x - p.radius * 0.3, p.y + p.radius * 0.3);
+      ctx.lineTo(p.x, p.y - p.radius);
+    } else {
+      ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+    }
+    ctx.fill();
+    p.x += p.vx;
+    p.y += p.vy;
+    if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+    if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+  });
+  requestAnimationFrame(animateParticles);
 }
 animateParticles();
 let timerStore = {};
 let useLocalStorage = true;
 document.addEventListener('DOMContentLoaded', () => {
-loadingSpinner.style.display = 'block';
-try {
-localStorage.setItem('test', 'test');
-localStorage.removeItem('test');
-} catch (e) {
-useLocalStorage = false;
-document.getElementById('storageWarning').style.display = 'block';
-}
-document.querySelectorAll('.checklist-item input').forEach(t => {
-const checked = useLocalStorage ? localStorage.getItem(t.id) === 'true' : timerStore[t.id] === true;
-t.checked = checked;
-t.addEventListener('change', () => {
-try {
-if (useLocalStorage) {
-localStorage.setItem(t.id, t.checked);
-localStorage.setItem(`${t.id}_time`, t.checked ? Date.now() : '');
-} else {
-timerStore[t.id] = t.checked;
-timerStore[`${t.id}_time`] = t.checked ? Date.now() : '';
-}
-updateTimers();
-} catch (e) {
-console.error(e);
-}
-});
-});
-const searchBar = document.getElementById('searchBar');
-const suggestions = document.getElementById('suggestions');
-const allTopics = Array.from(document.querySelectorAll('#year1 li')).map(li => {
-const strong = li.querySelector('strong');
-return strong ? strong.textContent : li.textContent.split(':')[0].trim();
-}).filter(t => t);
-searchBar.addEventListener('input', () => {
-const query = searchBar.value.toLowerCase();
-suggestions.innerHTML = '';
-if (query) {
-const matches = allTopics.filter(t => t.toLowerCase().includes(query));
-matches.forEach(m => {
-const div = document.createElement('div');
-div.textContent = m;
-div.addEventListener('click', () => {
-searchBar.value = m;
-searchContent();
-suggestions.style.display = 'none';
-});
-suggestions.appendChild(div);
-});
-suggestions.style.display = matches.length ? 'block' : 'none';
-} else {
-suggestions.style.display = 'none';
-}
-});
-const details = document.querySelectorAll('details');
-details.forEach((d, i) => {
-d.setAttribute('tabindex', '0');
-d.addEventListener('keydown', (e) => {
-if (e.key === 'Enter' || e.key === ' ') {
-e.preventDefault();
-d.open = !d.open;
-} else if (e.key === 'ArrowDown') {
-e.preventDefault();
-if (i < details.length - 1) details[i + 1].focus();
-} else if (e.key === 'ArrowUp') {
-e.preventDefault();
-if (i > 0) details[i - 1].focus();
-}
-});
-});
-window.downloadProgress = () => {
-const data = useLocalStorage ? { ...localStorage } : { ...timerStore };
-const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
-const url = URL.createObjectURL(blob);
-const a = document.createElement('a');
-a.href = url;
-a.download = 'serpents-codex-progress.json';
-a.click();
-URL.revokeObjectURL(url);
-};
-document.getElementById('uploadProgress').addEventListener('change', (e) => {
-const file = e.target.files[0];
-if (file) {
-const reader = new FileReader();
-reader.onload = (event) => {
-try {
-const data = JSON.parse(event.target.result);
-if (useLocalStorage) {
-Object.keys(data).forEach(k => localStorage.setItem(k, data[k]));
-} else {
-timerStore = { ...data };
-}
-location.reload();
-} catch (err) {
-console.error('Failed to load progress:', err);
-}
-};
-reader.readAsText(file);
-}
-});
-updateTimers();
-setInterval(updateTimers, 10000);
+  loadingSpinner.style.display = 'block';
+  try {
+    localStorage.setItem('test', 'test');
+    localStorage.removeItem('test');
+  } catch (e) {
+    useLocalStorage = false;
+    document.getElementById('storageWarning').style.display = 'block';
+  }
+  document.querySelectorAll('.checklist-item input').forEach(t => {
+    const checked = useLocalStorage ? localStorage.getItem(t.id) === 'true' : timerStore[t.id] === true;
+    t.checked = checked;
+    t.addEventListener('change', () => {
+      try {
+        if (useLocalStorage) {
+          localStorage.setItem(t.id, t.checked);
+          localStorage.setItem(`${t.id}_time`, t.checked ? Date.now() : '');
+        } else {
+          timerStore[t.id] = t.checked;
+          timerStore[`${t.id}_time`] = t.checked ? Date.now() : '';
+        }
+        updateTimers();
+      } catch (e) {
+        console.error(e);
+        document.getElementById('storageWarning').style.display = 'block';
+        document.getElementById('storageWarning').textContent = 'Error saving progress. Please try again or download progress.';
+      }
+    });
+  });
+  const searchBar = document.getElementById('searchBar');
+  const suggestions = document.getElementById('suggestions');
+  const allTopics = Array.from(document.querySelectorAll('#year1 li, #buyIngredients li, #findIngredients li, #betterPotionRecipes summary, #moreGuides li')).map(el => {
+    const strong = el.querySelector('strong');
+    return strong ? strong.textContent : el.textContent.split(':')[0].trim();
+  }).filter(t => t);
+  searchBar.addEventListener('input', () => {
+    const query = searchBar.value.toLowerCase();
+    suggestions.innerHTML = '';
+    if (query) {
+      const matches = allTopics.filter(t => t.toLowerCase().includes(query));
+      matches.forEach(m => {
+        const div = document.createElement('div');
+        div.textContent = m;
+        div.addEventListener('click', () => {
+          searchBar.value = m;
+          searchContent();
+          suggestions.style.display = 'none';
+        });
+        suggestions.appendChild(div);
+      });
+      suggestions.style.display = matches.length ? 'block' : 'none';
+    } else {
+      suggestions.style.display = 'none';
+    }
+  });
+  const details = document.querySelectorAll('details');
+  details.forEach((d, i) => {
+    d.setAttribute('tabindex', '0');
+    d.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        d.open = !d.open;
+      } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        if (i < details.length - 1) details[i + 1].focus();
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (i > 0) details[i - 1].focus();
+      }
+    });
+  });
+  window.downloadProgress = () => {
+    const data = useLocalStorage ? { ...localStorage } : { ...timerStore };
+    const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'serpents-codex-progress.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+  document.getElementById('uploadProgress').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const data = JSON.parse(event.target.result);
+          if (useLocalStorage) {
+            Object.keys(data).forEach(k => localStorage.setItem(k, data[k]));
+          } else {
+            timerStore = { ...data };
+          }
+          location.reload();
+        } catch (err) {
+          console.error('Failed to load progress:', err);
+          document.getElementById('storageWarning').style.display = 'block';
+          document.getElementById('storageWarning').textContent = 'Failed to load progress. Please try a valid JSON file.';
+        }
+      };
+      reader.readAsText(file);
+    }
+  });
+  updateTimers();
+  setInterval(updateTimers, 10000);
 });
 function updateTimers() {
-try {
-const now = Date.now();
-document.querySelectorAll('.checklist-item input').forEach(e => {
-const timerEl = document.getElementById(`timer${e.id.replace('daily', '')}`);
-const startTime = parseInt(useLocalStorage ? localStorage.getItem(`${e.id}_time`) : timerStore[`${e.id}_time`] || 0);
-const duration = (e.id === 'daily3' || e.id === 'daily8') ? 86400000 : 64800000;
-if (e.checked && startTime) {
-const timeLeft = startTime + duration - now;
-if (timeLeft > 0) {
-const hours = Math.floor(timeLeft / 3600000);
-const minutes = Math.floor((timeLeft % 3600000) / 60000);
-timerEl.textContent = `${hours}h ${minutes}m left`;
-} else {
-timerEl.textContent = 'Ready!';
-e.checked = false;
-if (useLocalStorage) {
-localStorage.setItem(e.id, 'false');
-localStorage.removeItem(`${e.id}_time`);
-} else {
-timerStore[e.id] = false;
-delete timerStore[`${e.id}_time`];
-}
-}
-} else {
-timerEl.textContent = '';
-}
-});
-} catch (t) {
-console.error(t);
-}
+  try {
+    const now = Date.now();
+    document.querySelectorAll('.checklist-item input').forEach(e => {
+      const timerEl = document.getElementById(`timer${e.id.replace('daily', '')}`);
+      const startTime = parseInt(useLocalStorage ? localStorage.getItem(`${e.id}_time`) : timerStore[`${e.id}_time`] || 0);
+      const duration = (e.id === 'daily3' || e.id === 'daily8') ? 86400000 : 64800000;
+      if (e.checked && startTime) {
+        const timeLeft = startTime + duration - now;
+        if (timeLeft > 0) {
+          const hours = Math.floor(timeLeft / 3600000);
+          const minutes = Math.floor((timeLeft % 3600000) / 60000);
+          timerEl.textContent = `${hours}h ${minutes}m left`;
+        } else {
+          timerEl.textContent = 'Ready!';
+          e.checked = false;
+          if (useLocalStorage) {
+            localStorage.setItem(e.id, 'false');
+            localStorage.removeItem(`${e.id}_time`);
+          } else {
+            timerStore[e.id] = false;
+            delete timerStore[`${e.id}_time`];
+          }
+        }
+      } else {
+        timerEl.textContent = '';
+      }
+    });
+  } catch (t) {
+    console.error(t);
+    document.getElementById('storageWarning').style.display = 'block';
+    document.getElementById('storageWarning').textContent = 'Error updating timers. Please try again or download progress.';
+  }
 }
 function searchContent() {
-try {
-const query = document.getElementById('searchBar').value.toLowerCase();
-document.querySelectorAll('details').forEach(e => {
-const matches = e.textContent.toLowerCase().includes(query);
-e.style.display = matches ? '' : 'none';
-if (query && matches) {
-const parent = e.closest('details');
-if (parent) parent.open = true;
-e.open = true;
-}
-});
-} catch (t) {
-console.error(t);
-}
+  try {
+    const query = document.getElementById('searchBar').value.toLowerCase();
+    document.querySelectorAll('details').forEach(e => {
+      const matches = e.textContent.toLowerCase().includes(query);
+      e.style.display = matches ? '' : 'none';
+      if (query && matches) {
+        const parent = e.closest('details');
+        if (parent) parent.open = true;
+        e.open = true;
+      }
+    });
+  } catch (t) {
+    console.error(t);
+    document.getElementById('storageWarning').style.display = 'block';
+    document.getElementById('storageWarning').textContent = 'Error searching content. Please try again.';
+  }
 }
 </script>
 </body>
