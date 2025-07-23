@@ -1,0 +1,579 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Serpent’s Codex</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+<style>
+@font-face {
+font-family: 'MagicSchool';
+src: local('MagicSchool'), url('MagicSchool.ttf') format('truetype');
+font-weight: normal;
+font-style: normal;
+}
+:root {
+--slytherin-background: #0a2414;
+--slytherin-card-bg: #e8ecef;
+--slytherin-text: #000000;
+--slytherin-header: #cccccc;
+--slytherin-accent: #1a3c34;
+--slytherin-border: #4a7043;
+}
+body {
+background: var(--slytherin-background);
+color: var(--slytherin-text);
+font-family: 'Roboto', sans-serif;
+max-width: 800px;
+margin: 20px auto;
+padding: 8px;
+position: relative;
+overflow-x: hidden;
+}
+@media (max-width: 600px) {
+body { padding: 8px; }
+.title { font-size: 2.8em; }
+}
+#loadingSpinner {
+position: fixed;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+width: 40px;
+height: 40px;
+border: 4px solid var(--slytherin-border);
+border-top: 4px solid transparent;
+border-radius: 50%;
+animation: spin 1s linear infinite;
+z-index: 20;
+display: none;
+}
+@keyframes spin { 0% { transform: translate(-50%, -50%) rotate(0deg); } 100% { transform: translate(-50%, -50%) rotate(360deg); } }
+canvas {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+z-index: -1;
+}
+header { text-align: center; margin-bottom: 20px; }
+.title {
+display: inline-block;
+font-family: 'MagicSchool', 'Roboto', sans-serif;
+color: var(--slytherin-header);
+font-size: 3.5em;
+font-weight: 300;
+text-shadow: 0.5px 0.5px 1px rgba(0,0,0,0.2);
+letter-spacing: 0.05em;
+line-height: 1.2;
+}
+.title span {
+opacity: 0;
+animation: appear 0.12s forwards;
+}
+.title span:nth-child(1) { animation-delay: 0.12s; }
+.title span:nth-child(2) { animation-delay: 0.24s; }
+.title span:nth-child(3) { animation-delay: 0.36s; }
+.title span:nth-child(4) { animation-delay: 0.48s; }
+.title span:nth-child(5) { animation-delay: 0.60s; }
+.title span:nth-child(6) { animation-delay: 0.72s; }
+.title span:nth-child(7) { animation-delay: 0.84s; }
+.title span:nth-child(8) { animation-delay: 0.96s; }
+.title span:nth-child(9) { animation-delay: 1.08s; }
+.title span:nth-child(10) { animation-delay: 1.20s; }
+.title span:nth-child(11) { animation-delay: 1.32s; }
+.title span:nth-child(12) { animation-delay: 1.44s; }
+.title span:nth-child(13) { animation-delay: 1.56s; }
+.title span:nth-child(14) { animation-delay: 1.68s; }
+.title span:nth-child(15) { animation-delay: 1.80s; }
+@keyframes appear { to { opacity: 1; } }
+.made-by {
+font-size: 0.8em;
+font-style: italic;
+color: var(--slytherin-header);
+text-align: center;
+margin-top: -10px;
+}
+.storage-warning {
+background: var(--slytherin-accent);
+color: var(--slytherin-header);
+padding: 8px;
+border-radius: 5px;
+margin-bottom: 16px;
+font-size: 0.9em;
+text-align: center;
+display: none;
+}
+.storage-warning button {
+background: var(--slytherin-accent);
+color: var(--slytherin-card-bg);
+border: none;
+padding: 5px 10px;
+border-radius: 6px;
+cursor: pointer;
+margin-left: 8px;
+transition: all 0.3s ease;
+}
+.storage-warning button:hover {
+background: var(--slytherin-border);
+box-shadow: 0 0 10px var(--slytherin-border);
+transform: scale(1.05);
+}
+#searchBar {
+width: 100%;
+padding: 8px;
+margin-bottom: 16px;
+font-size: 1em;
+border: 1px solid var(--slytherin-border);
+border-radius: 8px;
+background: var(--slytherin-card-bg);
+color: var(--slytherin-text);
+position: sticky;
+top: 0;
+z-index: 5;
+box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+transition: box-shadow 0.3s ease;
+}
+#searchBar:hover, #searchBar:focus {
+box-shadow: 0 0 10px var(--slytherin-border);
+}
+.search-suggestions {
+position: absolute;
+width: 100%;
+max-height: 150px;
+overflow-y: auto;
+background: var(--slytherin-card-bg);
+border: 1px solid var(--slytherin-border);
+border-radius: 5px;
+z-index: 6;
+display: none;
+animation: fadeInSuggestions 0.3s ease;
+}
+@keyframes fadeInSuggestions { from { opacity: 0; } to { opacity: 1; } }
+.search-suggestions div {
+padding: 8px 10px;
+cursor: pointer;
+color: var(--slytherin-text);
+font-size: 1.1em;
+}
+.search-suggestions div:hover {
+background: var(--slytherin-border);
+color: var(--slytherin-header);
+}
+details {
+margin: 8px 0;
+background: var(--slytherin-card-bg);
+padding: 8px;
+border-radius: 6px;
+border: 1px solid var(--slytherin-border);
+box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+details:hover {
+transform: translateY(-2px);
+box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+summary {
+cursor: pointer;
+font-weight: 700;
+font-size: 1.3em;
+color: var(--slytherin-header);
+padding: 5px;
+background: var(--slytherin-accent);
+border-radius: 5px;
+transition: box-shadow 0.3s ease;
+}
+summary:hover {
+box-shadow: 0 0 6px var(--slytherin-border);
+}
+ul { list-style-type: none; padding-left: 16px; }
+li { margin: 5px 0; font-size: 1em; line-height: 1.5; color: var(--slytherin-text); }
+.notes {
+font-style: italic;
+color: var(--slytherin-accent);
+margin: 5px 0;
+font-size: 0.9em;
+}
+.checklist-item {
+display: flex;
+align-items: center;
+margin: 5px 0;
+}
+.checklist-item input { margin-right: 8px; }
+.checklist-item span { color: var(--slytherin-text); font-size: 1em; }
+.timer {
+margin-left: 8px;
+font-size: 0.9em;
+color: var(--slytherin-card-bg);
+background: var(--slytherin-border);
+padding: 4px 8px;
+border-radius: 4px;
+border: 1px solid var(--slytherin-accent);
+display: inline-block;
+min-width: 80px;
+text-align: center;
+}
+.guide-button {
+display: inline-block;
+padding: 5px 10px;
+background: var(--slytherin-accent);
+color: var(--slytherin-card-bg);
+text-decoration: none;
+border-radius: 6px;
+margin: 5px 0;
+font-size: 0.9em;
+transition: all 0.3s ease;
+}
+.guide-button:hover {
+background: var(--slytherin-border);
+box-shadow: 0 0 10px var(--slytherin-border);
+transform: scale(1.05);
+}
+</style>
+</head>
+<body>
+<div id="loadingSpinner"></div>
+<canvas id="particles"></canvas>
+<header>
+<h1 class="title"><span>S</span><span>e</span><span>r</span><span>p</span><span>e</span><span>n</span><span>t</span><span>’</span><span>s</span><span> </span><span>C</span><span>o</span><span>d</span><span>e</span><span>x</span></h1>
+</header>
+<p class="made-by">Made by Yogtze © 2025 All Rights Reserved</p>
+<div id="storageWarning" class="storage-warning">Local storage is disabled. Timers will reset when you close the page. Try disabling incognito mode or enabling storage. <button onclick="this.parentNode.style.display='none'">Dismiss</button><button onclick="downloadProgress()">Download Progress</button><input type="file" id="uploadProgress" style="display:none" accept=".json"><button onclick="document.getElementById('uploadProgress').click()">Upload Progress</button></div>
+<input type="text" id="searchBar" placeholder="Search for a subject, daily, or guide..." onkeyup="searchContent()" aria-label="Search content">
+<div class="search-suggestions" id="suggestions"></div>
+<details id="year1"><summary>Year 1</summary>
+<details><summary>Potions</summary><ul>
+<li><strong>Insomnia:</strong> 48 hours, True, Snake</li>
+<li><strong>Curcubita:</strong> Orange, False, Encases the drinker's head into a pumpkin</li>
+<li><strong>Herbicide:</strong> Thickens them, It can kill weeds, False</li>
+<li><strong>Remedy for Regular Toxins:</strong> Bezoar, Powdered, Bowtruckle, Uncommon</li>
+</ul></details>
+<details><summary>Magical History</summary><ul>
+<li><strong>International Statute of Secrecy:</strong> Gavroche Grelenwaffe & Lord Voldemort, Henry Parker, International Statute of Secrecy</li>
+</ul></details>
+<details><summary>Enchantments</summary><ul>
+<li><strong>Periculum Incantatem:</strong> Explosion, Red, Periculum</li>
+<li><strong>Engorgement:</strong> Icy Blue, Reducio, Explosions</li>
+<li><strong>Alohomora:</strong> Eldon Elsrickle, You didn't tell us, Red</li>
+<li><strong>Refilling:</strong> Replenish, Green, Filling motion</li>
+<li><strong>Petrificus Totalus:</strong> Ehpeepeekey, Body Freezing Spell, Curse</li>
+</ul></details>
+<details><summary>Transfiguration</summary><ul>
+<li><strong>Avifors:</strong> Avis, Eggs, Transformations</li>
+<li><strong>Rabbits to Slippers:</strong> Lapifors, Cows, Transformation</li>
+</ul></details>
+<details><summary>Dark Arts Defense</summary><ul>
+<li><strong>Vampires:</strong> Saliva, Garlic, Being</li>
+<li><strong>Bukavac:</strong> Revulsion Jinx, Break their grip, XX</li>
+<li><strong>Poxies:</strong> Knockback Jinx, Their numbers might overwhelm you, Arms and legs</li>
+</ul></details>
+<details><summary>Astronomy</summary><ul>
+<li><strong>Saturn:</strong> God of Time, Galileo Galilei, Brown eyes</li>
+<li><strong>Introduction to Astronomy:</strong> Fluxweed, The study of celestial objects, Manipulating tools and improving the accuracy of measurements</li>
+<li><strong>Telescopes:</strong> Break-Resistant, A solar eclipse, Aperture</li>
+</ul></details>
+<details><summary>Herbology</summary><ul>
+<li><strong>Spiky Bush:</strong> 30, South America, Incendio</li>
+<li><strong>Moly:</strong> The Odyssey, Black and White, Flat, grassy areas</li>
+</ul></details>
+</details>
+<details id="year2"><summary>Year 2</summary><ul><li>No class answers available yet.</li></ul></details>
+<details id="year3"><summary>Year 3</summary><ul><li>No class answers available yet.</li></ul></details>
+<details id="year4"><summary>Year 4</summary><ul><li>No class answers available yet.</li></ul></details>
+<details id="year5"><summary>Year 5</summary><ul><li>No class answers available yet.</li></ul></details>
+<details id="year6"><summary>Year 6</summary><ul><li>No class answers available yet.</li></ul></details>
+<details id="graduate"><summary>Graduate</summary><ul><li>No class answers available yet.</li></ul></details>
+<details id="dailies"><summary>Dailies</summary><ul>
+<li class="checklist-item"><input type="checkbox" id="daily1" aria-label="Enchantments, Transfiguration, and Dark Arts Defense"><span><strong>Enchantments, Transfiguration, and Dark Arts Defense</strong> spell casts</span><span class="timer" id="timer1"></span></li>
+<li class="checklist-item"><input type="checkbox" id="daily2" aria-label="Hagberts Mine pt1"><span><strong>Hagberts Mine pt1</strong></span><span class="timer" id="timer2"></span></li>
+<li class="checklist-item"><input type="checkbox" id="daily7" aria-label="Hagberts Mine pt2"><span><strong>Hagberts Mine pt2</strong></span><span class="timer" id="timer7"></span></li>
+<li class="checklist-item"><input type="checkbox" id="daily3" aria-label="Room of Mysteries Maze"><span><strong>Room of Mysteries Maze</strong></span><span class="timer" id="timer3"></span></li>
+<li class="checklist-item"><input type="checkbox" id="daily8" aria-label="Hagberts Hut gift"><span><strong>Hagberts Hut gift</strong></span><span class="timer" id="timer8"></span></li>
+<li class="checklist-item"><input type="checkbox" id="daily4" aria-label="Warlocks Stone pt5"><span><strong>Warlocks Stone pt5</strong></span><span class="timer" id="timer4"></span></li>
+<li class="checklist-item"><input type="checkbox" id="daily5" aria-label="Springs Oak Tree Farm pt1-3"><span><strong>Springs Oak Tree Farm pt1-3</strong> <em>(you'll need to repair once at Hagberts Mine)</em></span><span class="timer" id="timer5"></span></li>
+<li class="checklist-item"><input type="checkbox" id="daily6" aria-label="????'s Google Doc Speedrun"><span><a href="https://docs.google.com/document/d/1KlI0sTRkMXmw8MS5kB4-ZhlUem7U_gWqrfNOvcXdPQg/edit?tab=t.6x2tieuubr07" target="_blank" class="guide-button">????'s Google Doc Speedrun</a></span><span class="timer" id="timer6"></span></li>
+</ul></details>
+<details id="guides"><summary>Guides</summary><ul>
+<li><a href="Roxas%20Potions.pdf" target="_blank" class="guide-button">Roxas’ Comprehensive Guide to Potions</a></li>
+<li><a href="Roxas%20Stormcrest.pdf" target="_blank" class="guide-button">Roxas’ Comprehensive Beginner’s Guide to Stormcrest</a></li>
+</ul></details>
+<script>
+var gk_isXlsx = false;
+var gk_xlsxFileLookup = {};
+var gk_fileData = {};
+function filledCell(cell) {
+return cell !== '' && cell != null;
+}
+function loadFileData(filename) {
+if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+try {
+var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+var firstSheetName = workbook.SheetNames[0];
+var worksheet = workbook.Sheets[firstSheetName];
+var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+var filteredData = jsonData.filter(row => row.some(filledCell));
+var headerRowIndex = filteredData.findIndex((row, index) =>
+row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+);
+if (headerRowIndex === -1 || headerRowIndex > 25) {
+headerRowIndex = 0;
+}
+var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex));
+csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+return csv;
+} catch (e) {
+console.error(e);
+return "";
+}
+}
+return gk_fileData[filename] || "";
+}
+const magicSchoolFont = new FontFace('MagicSchool', 'url(MagicSchool.ttf)');
+magicSchoolFont.load().then(() => {
+console.log('MagicSchool font loaded successfully');
+}).catch((error) => {
+console.error('Failed to load MagicSchool font:', error);
+});
+const loadingSpinner = document.getElementById('loadingSpinner');
+window.addEventListener('load', () => {
+loadingSpinner.style.display = 'none';
+});
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+const particles = [];
+for (let i = 0; i < 200; i++) {
+particles.push({
+x: Math.random() * canvas.width,
+y: Math.random() * canvas.height,
+radius: Math.random() * 2 + 1,
+type: Math.random() > 0.5 ? 'star' : 'bubble',
+vx: Math.random() * 0.6 - 0.3,
+vy: Math.random() * 0.6 - 0.3,
+opacity: Math.random() * 0.1 + 0.15
+});
+}
+function animateParticles() {
+ctx.clearRect(0, 0, canvas.width, canvas.height);
+particles.forEach(p => {
+ctx.fillStyle = `rgba(204, 204, 204, ${p.opacity})`;
+ctx.beginPath();
+if (p.type === 'star') {
+ctx.moveTo(p.x, p.y - p.radius);
+ctx.lineTo(p.x + p.radius * 0.3, p.y + p.radius * 0.3);
+ctx.lineTo(p.x + p.radius, p.y + p.radius);
+ctx.lineTo(p.x + p.radius * 0.3, p.y + p.radius * 0.3);
+ctx.lineTo(p.x, p.y + p.radius * 2);
+ctx.lineTo(p.x - p.radius * 0.3, p.y + p.radius * 0.3);
+ctx.lineTo(p.x - p.radius, p.y + p.radius);
+ctx.lineTo(p.x - p.radius * 0.3, p.y + p.radius * 0.3);
+ctx.lineTo(p.x, p.y - p.radius);
+} else {
+ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+}
+ctx.fill();
+p.x += p.vx;
+p.y += p.vy;
+if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+});
+requestAnimationFrame(animateParticles);
+}
+animateParticles();
+let timerStore = {};
+let useLocalStorage = true;
+document.addEventListener('DOMContentLoaded', () => {
+loadingSpinner.style.display = 'block';
+try {
+localStorage.setItem('test', 'test');
+localStorage.removeItem('test');
+} catch (e) {
+useLocalStorage = false;
+document.getElementById('storageWarning').style.display = 'block';
+}
+document.querySelectorAll('.checklist-item input').forEach(t => {
+const checked = useLocalStorage ? localStorage.getItem(t.id) === 'true' : timerStore[t.id] === true;
+t.checked = checked;
+t.addEventListener('change', () => {
+try {
+if (useLocalStorage) {
+localStorage.setItem(t.id, t.checked);
+localStorage.setItem(`${t.id}_time`, t.checked ? Date.now() : '');
+} else {
+timerStore[t.id] = t.checked;
+timerStore[`${t.id}_time`] = t.checked ? Date.now() : '';
+}
+updateTimers();
+} catch (e) {
+console.error(e);
+}
+});
+});
+const searchBar = document.getElementById('searchBar');
+const suggestions = document.getElementById('suggestions');
+const allTopics = Array.from(document.querySelectorAll('#year1 li')).map(li => {
+const strong = li.querySelector('strong');
+return strong ? strong.textContent : li.textContent.split(':')[0].trim();
+}).filter(t => t);
+searchBar.addEventListener('input', () => {
+const query = searchBar.value.toLowerCase();
+suggestions.innerHTML = '';
+if (query) {
+const matches = allTopics.filter(t => t.toLowerCase().includes(query));
+matches.forEach(m => {
+const div = document.createElement('div');
+div.textContent = m;
+div.addEventListener('click', () => {
+searchBar.value = m;
+searchContent();
+suggestions.style.display = 'none';
+});
+suggestions.appendChild(div);
+});
+suggestions.style.display = matches.length ? 'block' : 'none';
+} else {
+suggestions.style.display = 'none';
+}
+});
+const details = document.querySelectorAll('details');
+details.forEach((d, i) => {
+d.setAttribute('tabindex', '0');
+d.addEventListener('keydown', (e) => {
+if (e.key === 'Enter' || e.key === ' ') {
+e.preventDefault();
+d.open = !d.open;
+} else if (e.key === 'ArrowDown') {
+e.preventDefault();
+if (i < details.length - 1) details[i + 1].focus();
+} else if (e.key === 'ArrowUp') {
+e.preventDefault();
+if (i > 0) details[i - 1].focus();
+}
+});
+});
+window.downloadProgress = () => {
+const data = useLocalStorage ? { ...localStorage } : { ...timerStore };
+const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+const url = URL.createObjectURL(blob);
+const a = document.createElement('a');
+a.href = url;
+a.download = 'serpents-codex-progress.json';
+a.click();
+URL.revokeObjectURL(url);
+};
+document.getElementById('uploadProgress').addEventListener('change', (e) => {
+const file = e.target.files[0];
+if (file) {
+const reader = new FileReader();
+reader.onload = (event) => {
+try {
+const data = JSON.parse(event.target.result);
+if (useLocalStorage) {
+Object.keys(data).forEach(k => localStorage.setItem(k, data[k]));
+} else {
+timerStore = { ...data };
+}
+location.reload();
+} catch (err) {
+console.error('Failed to load progress:', err);
+}
+};
+reader.readAsText(file);
+}
+});
+updateTimers();
+setInterval(updateTimers, 10000);
+});
+function updateTimers() {
+try {
+const now = Date.now();
+document.querySelectorAll('.checklist-item input').forEach(e => {
+const timerEl = document.getElementById(`timer${e.id.replace('daily', '')}`);
+const startTime = parseInt(useLocalStorage ? localStorage.getItem(`${e.id}_time`) : timerStore[`${e.id}_time`] || 0);
+const duration = (e.id === 'daily3' || e.id === 'daily8') ? 86400000 : 64800000;
+if (e.checked && startTime) {
+const timeLeft = startTime + duration - now;
+if (timeLeft > 0) {
+const hours = Math.floor(timeLeft / 3600000);
+const minutes = Math.floor((timeLeft % 3600000) / 60000);
+timerEl.textContent = `${hours}h ${minutes}m left`;
+} else {
+timerEl.textContent = 'Ready!';
+e.checked = false;
+if (useLocalStorage) {
+localStorage.setItem(e.id, 'false');
+localStorage.removeItem(`${e.id}_time`);
+} else {
+timerStore[e.id] = false;
+delete timerStore[`${e.id}_time`];
+}
+}
+} else {
+timerEl.textContent = '';
+}
+});
+} catch (t) {
+console.error(t);
+}
+}
+function searchContent() {
+try {
+const query = document.getElementById('searchBar').value.toLowerCase();
+document.querySelectorAll('details').forEach(e => {
+const matches = e.textContent.toLowerCase().includes(query);
+e.style.display = matches ? '' : 'none';
+if (query && matches) {
+const parent = e.closest('details');
+if (parent) parent.open = true;
+e.open = true;
+}
+});
+} catch (t) {
+console.error(t);
+}
+}
+</script>
+</body>
+</html>
