@@ -39,7 +39,6 @@ This project is licensed under the [MIT License](LICENSE).
 
 - [Potterverse Studio](https://potterverse.us/) for the Harry Potter-themed Minecraft server.
 - [Netlify](https://www.netlify.com/) for hosting.
-- Yogtze-3sus for creating Serpent’s Codex.
 
 ## Contact
 
